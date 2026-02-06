@@ -1,0 +1,10 @@
+fastapi>=0.95.0
+uvicorn[standard]>=0.18.0
+pydantic
+python-dotenv
+requests
+redis
+rq
+ffmpeg-python
+openai
+boto3
