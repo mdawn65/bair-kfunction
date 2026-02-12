@@ -56,3 +56,33 @@ def compute_cer(reference, hypothesis):
 
     cer = dp[len(ref_chars)][len(hyp_chars)] / len(ref_chars)
     return cer
+
+
+def compute_per(reference_phonemes: str, hypothesis_phonemes: str) -> float:
+    """
+    Computes Phoneme Error Rate (PER) = (S + D + I) / N
+    reference_phonemes and hypothesis_phonemes should be space-separated phonemes
+    """
+    ref_phonemes = reference_phonemes.lower().split()
+    hyp_phonemes = hypothesis_phonemes.lower().split()
+
+    # Initialize DP matrix
+    dp = [[0] * (len(hyp_phonemes) + 1) for _ in range(len(ref_phonemes) + 1)]
+    for i in range(len(ref_phonemes) + 1):
+        dp[i][0] = i
+    for j in range(len(hyp_phonemes) + 1):
+        dp[0][j] = j
+
+    # Fill DP matrix (Levenshtein distance)
+    for i in range(1, len(ref_phonemes) + 1):
+        for j in range(1, len(hyp_phonemes) + 1):
+            if ref_phonemes[i - 1] == hyp_phonemes[j - 1]:
+                dp[i][j] = dp[i - 1][j - 1]
+            else:
+                substitute = dp[i - 1][j - 1] + 1
+                insert = dp[i][j - 1] + 1
+                delete = dp[i - 1][j] + 1
+                dp[i][j] = min(substitute, insert, delete)
+
+    per = dp[len(ref_phonemes)][len(hyp_phonemes)] / len(ref_phonemes)
+    return per
